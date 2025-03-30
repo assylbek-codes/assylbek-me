@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
     // Disable ESLint during production builds for improved performance
     ignoreDuringBuilds: true,
   },
+  // Specify that the application is compatible with the Edge Runtime
+  experimental: {
+    // Any experimental features needed for Cloudflare
+  },
+  // Ensure output is configured properly for Cloudflare
+  output: 'standalone',
 };
 
 export default nextConfig;
