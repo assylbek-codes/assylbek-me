@@ -1,5 +1,6 @@
 {
   "buildConfig": {
+    "buildCommand": "npm run static-build",
     "outputDirectory": "out"
   }
 } 
