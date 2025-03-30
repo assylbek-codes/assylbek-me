@@ -1,5 +1,8 @@
 [build]
-command = "npm run build:no-lint"
+command = "npm run build && npm run pages:build"
 [[build.environment]]
 name = "NODE_VERSION"
-value = "20" 
+value = "20"
+
+[site]
+bucket = ".vercel/output/static" 
