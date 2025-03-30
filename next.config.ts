@@ -2,14 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   eslint: {
     // Disable ESLint during production builds for improved performance
     ignoreDuringBuilds: true,
   },
-  // Force Edge runtime to be used globally (this is set at the page level already)
+  // Update to use serverExternalPackages as recommended in the error message
   experimental: {
-    serverComponentsExternalPackages: [],
+    // Removed serverComponentsExternalPackages as it's deprecated
   },
   // Use the correct output format for Cloudflare
   output: 'standalone',
