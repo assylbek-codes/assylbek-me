@@ -8,9 +8,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:no-lint": "NEXT_DISABLE_ESLINT=1 next build",
-    "pages:build": "npx @cloudflare/next-on-pages@1",
-    "pages:preview": "npx wrangler pages dev .vercel/output/static --compatibility-flag=nodejs_compat",
     "start": "next start",
     "lint": "next lint"
   },
@@ -28,8 +25,6 @@
     "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
-    "@eslint/eslintrc": "^3",
-    "@cloudflare/next-on-pages": "^1.0.0",
-    "wrangler": "^3.0.0"
+    "@eslint/eslintrc": "^3"
   }
 }

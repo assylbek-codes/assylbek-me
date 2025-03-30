@@ -1,11 +1,11 @@
 [build]
-command = "npm run build && npm run pages:build"
+command = "npm install && npm run build"
 
 [build.environment]
 NODE_VERSION = "20"
 
 [site]
-bucket = ".vercel/output/static"
+bucket = "out"
 
 [env.production]
 routes = [

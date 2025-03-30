@@ -7,14 +7,16 @@ const nextConfig: NextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  // Indicated that the app should be deployed to a target other than "server"
+  // Configure static export
   output: "export",
-  // Required for static export of Next.js app
+  // Required for static export of Next.js app - forces images to be unoptimized
   images: {
     unoptimized: true,
   },
   // Ensure trailing slashes are used
   trailingSlash: true,
+  // Set output directory for static export
+  distDir: "out",
 };
 
 export default nextConfig;
