@@ -1,13 +1,5 @@
 name = "assylbek-me"
-
 compatibility_date = "2023-06-28"
 compatibility_flags = ["nodejs_compat"]
-
 # Specify the build output directory for Cloudflare Pages
 pages_build_output_dir = ".vercel/output/static"
-
-# Specify a more recent Node.js version
-[build]
-command = "npm run pages:build"
-[build.environment]
-NODE_VERSION = "18.18.0" 

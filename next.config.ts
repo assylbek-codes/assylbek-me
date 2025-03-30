@@ -10,8 +10,14 @@ const nextConfig: NextConfig = {
   experimental: {
     // Any experimental features needed for Cloudflare
   },
-  // Ensure output is configured properly for Cloudflare
-  output: 'standalone',
+  // Ensure output is configured properly for Cloudflare Pages/Workers
+  output: 'export',
+  // Disable image optimization as Cloudflare Pages has its own handling
+  images: {
+    unoptimized: true,
+  },
+  // Disable server-side processing
+  trailingSlash: true,
 };
 
 export default nextConfig;
