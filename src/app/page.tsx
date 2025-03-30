@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+// Restore edge runtime for Cloudflare compatibility
 export const runtime = "edge";
 
 export default function Home() {
