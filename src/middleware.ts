@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Explicitly specify experimental Edge runtime for middleware
-export const runtime = 'experimental-edge';
+// Specify Edge runtime for middleware
+export const runtime = 'edge';
 
 export function middleware(request: NextRequest) {
   // Simple middleware to log requests and potentially catch errors

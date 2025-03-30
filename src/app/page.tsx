@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
-// Update to experimental-edge runtime for compatibility with Next.js
-export const runtime = "experimental-edge";
+// Specify edge runtime for Cloudflare compatibility
+export const runtime = "edge";
 
 export default function Home() {
   return (
