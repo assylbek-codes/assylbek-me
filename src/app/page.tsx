@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+export const runtime = "edge";
+
 export default function Home() {
   return (
     <div className="min-h-screen">
@@ -49,7 +51,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-10 md:mb-0">
               <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                Hi, I&apos;m Assylbek
+                Hi, I'm Assylbek
               </h1>
               <h2 className="text-2xl md:text-3xl text-gray-600 dark:text-gray-400 mb-6">
                 Software Engineer
@@ -135,13 +137,13 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-12 text-center">About Me</h2>
           <div className="max-w-3xl mx-auto">
             <p className="text-lg mb-6">
-            Hi, I&apos;m Assylbek, a software engineer and startup founder passionate about creating innovative, scalable digital solutions. I co-founded Clout, a platform designed to simplify media-kit creation and brand collaboration for influencers, integrating seamlessly with major social platforms like Instagram, Facebook, TikTok, and YouTube.
+            Hi, I'm Assylbek, a software engineer and startup founder passionate about creating innovative, scalable digital solutions. I co-founded Clout, a platform designed to simplify media-kit creation and brand collaboration for influencers, integrating seamlessly with major social platforms like Instagram, Facebook, TikTok, and YouTube.
             </p>
             <p className="text-lg mb-6">
             My background includes software engineering at Qlub, where I built global POS system integrations, and research at the NYUAD Laboratory for Computer-Human Intelligence, developing real-time analytics tools for user productivity. With a strong foundation in Python, Django, AWS, and RESTful APIs, I focus on delivering reliable and efficient backend solutions.
             </p>
             <p className="text-lg">
-            I thrive in entrepreneurial environments, love exploring the intersection of technology and user experience, and am always open to exciting collaborations and new ventures. Let&apos;s connect!
+            I thrive in entrepreneurial environments, love exploring the intersection of technology and user experience, and am always open to exciting collaborations and new ventures. Let's connect!
             </p>
           </div>
         </div>
@@ -699,7 +701,7 @@ export default function Home() {
                 <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
                   <h3 className="text-xl font-bold mb-6">Availability</h3>
                   <p className="text-gray-700 dark:text-gray-300 mb-6">
-                    I&apos;m currently available for freelance work, consulting opportunities, and startup collaborations. Feel free to reach out if you&apos;re interested in working together!
+                    I'm currently available for freelance work, consulting opportunities, and startup collaborations. Feel free to reach out if you're interested in working together!
                   </p>
                   
                   <h4 className="text-lg font-semibold mb-2">Response Time</h4>

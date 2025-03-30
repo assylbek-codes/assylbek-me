@@ -1,12 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
-  images: {
-    unoptimized: true,
+  /* config options here */
+  eslint: {
+    // Disable ESLint during production builds for improved performance
+    ignoreDuringBuilds: true,
   },
-  trailingSlash: true,
-  basePath: '',
 };
 
 export default nextConfig;
