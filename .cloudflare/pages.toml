@@ -1,0 +1,5 @@
+[build]
+command = "npm run build"
+[[build.environment]]
+name = "NODE_VERSION"
+value = "20" 
