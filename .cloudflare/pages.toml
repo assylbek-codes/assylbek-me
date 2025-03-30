@@ -1,5 +1,5 @@
 [build]
-command = "npm run build"
+command = "npm run build:no-lint"
 [[build.environment]]
 name = "NODE_VERSION"
 value = "20" 

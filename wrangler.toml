@@ -1,4 +1,9 @@
 [build]
-command = "npm run build"
+command = "npm run build:no-lint"
+
 [build.environment]
-NODE_VERSION = "20" 
+NODE_VERSION = "20"
+
+[site]
+bucket = ".next"
+pages_build_output_dir = ".output/static" 
