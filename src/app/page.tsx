@@ -1,44 +1,248 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export default function Home() {
+  const [showAllProjects, setShowAllProjects] = useState(false);
+  const projectsToShow = showAllProjects ? 100 : 3; // Show all or just 3 initially
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Throttled state updater for mobile menu to prevent rapid toggles
+  const toggleMobileMenu = useCallback(() => {
+    setMobileMenuOpen(prev => !prev);
+    // Prevent body scroll when menu is open
+    if (document.body) {
+      document.body.style.overflow = !mobileMenuOpen ? 'hidden' : '';
+    }
+  }, [mobileMenuOpen]);
+  
+  // Close menu when clicking outside
+  useEffect(() => {
+    // Debounced handler for click outside
+    let timeoutId: NodeJS.Timeout | null = null;
+    
+    function handleClickOutside(event: MouseEvent) {
+      if (timeoutId) clearTimeout(timeoutId);
+      
+      timeoutId = setTimeout(() => {
+        if (
+          mobileMenuRef.current && 
+          !mobileMenuRef.current.contains(event.target as Node) &&
+          mobileButtonRef.current &&
+          !mobileButtonRef.current.contains(event.target as Node)
+        ) {
+          setMobileMenuOpen(false);
+          if (document.body) {
+            document.body.style.overflow = '';
+          }
+        }
+      }, 50); // Small delay to prevent excessive re-renders
+    }
+    
+    // Only add event listener if mobile menu is open
+    if (mobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
+  
+  // Memo-ized link click handler
+  const handleLinkClick = useCallback(() => {
+    setMobileMenuOpen(false);
+    if (document.body) {
+      document.body.style.overflow = '';
+    }
+  }, []);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (document.body) {
+        document.body.style.overflow = '';
+      }
+    };
+  }, []);
+  
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm py-4">
+      <nav className="sticky top-0 z-30 bg-white dark:bg-gray-900 shadow-sm py-4">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-xl font-bold">
+            <Link href="/" className="text-xl font-bold flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
               Assylbek Saduakhassov
             </Link>
+            {/* Desktop menu */}
             <div className="hidden md:flex space-x-6">
-              <Link href="#about" className="hover:text-blue-500 transition-colors">
+              <Link href="#about" className="hover:text-blue-500 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
                 About
               </Link>
-              <Link href="#education" className="hover:text-blue-500 transition-colors">
+              <Link href="#education" className="hover:text-blue-500 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                </svg>
                 Education
               </Link>
-              <Link href="#experience" className="hover:text-blue-500 transition-colors">
+              <Link href="#experience" className="hover:text-blue-500 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
                 Experience
               </Link>
-              <Link href="#projects" className="hover:text-blue-500 transition-colors">
+              <Link href="#projects" className="hover:text-blue-500 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
                 Projects
               </Link>
-              <Link href="#skills" className="hover:text-blue-500 transition-colors">
+              <Link href="#skills" className="hover:text-blue-500 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
                 Skills
               </Link>
-              <Link href="#resume" className="hover:text-blue-500 transition-colors">
+              <Link href="#resume" className="hover:text-blue-500 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
                 Resume
               </Link>
-              <Link href="#contact" className="hover:text-blue-500 transition-colors">
+              <Link href="#contact" className="hover:text-blue-500 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
                 Contact
               </Link>
             </div>
-            <button className="md:hidden">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+            {/* Mobile menu toggle button */}
+            <button 
+              ref={mobileButtonRef}
+              className="md:hidden relative z-50 w-10 h-10 flex items-center justify-center focus:outline-none"
+              onClick={toggleMobileMenu}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+            >
+              <div className="relative w-6 h-5">
+                <span 
+                  className={`absolute h-0.5 w-6 bg-black dark:bg-white transform transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'rotate-45 top-2.5' : 'rotate-0 top-0'}`}
+                ></span>
+                <span 
+                  className={`absolute h-0.5 w-6 bg-black dark:bg-white transform transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'opacity-0 top-2.5' : 'opacity-100 top-2.5'}`}
+                ></span>
+                <span 
+                  className={`absolute h-0.5 w-6 bg-black dark:bg-white transform transition-all duration-300 ease-in-out ${mobileMenuOpen ? '-rotate-45 top-2.5' : 'rotate-0 top-5'}`}
+                ></span>
+              </div>
             </button>
+          </div>
+          
+          {/* Overlay - appears when mobile menu is open */}
+          {mobileMenuOpen && (
+            <div 
+              className="fixed inset-0 bg-black/50 z-20 md:hidden"
+              onClick={handleLinkClick}
+              aria-hidden="true"
+            />
+          )}
+          
+          {/* Mobile menu */}
+          <div 
+            ref={mobileMenuRef}
+            className={`
+              fixed top-0 right-0 h-full w-3/4 max-w-xs bg-white dark:bg-gray-800 shadow-xl z-40 
+              transform transition-transform duration-300 ease-in-out md:hidden
+              ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
+            `}
+          >
+            <div className="flex flex-col pt-20 px-6">
+              <Link 
+                href="#about" 
+                className="py-3 border-b border-gray-200 dark:border-gray-700 hover:text-blue-500 transition-colors flex items-center gap-2"
+                onClick={handleLinkClick}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                About
+              </Link>
+              <Link 
+                href="#education" 
+                className="py-3 border-b border-gray-200 dark:border-gray-700 hover:text-blue-500 transition-colors flex items-center gap-2"
+                onClick={handleLinkClick}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                </svg>
+                Education
+              </Link>
+              <Link 
+                href="#experience" 
+                className="py-3 border-b border-gray-200 dark:border-gray-700 hover:text-blue-500 transition-colors flex items-center gap-2"
+                onClick={handleLinkClick}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Experience
+              </Link>
+              <Link 
+                href="#projects" 
+                className="py-3 border-b border-gray-200 dark:border-gray-700 hover:text-blue-500 transition-colors flex items-center gap-2"
+                onClick={handleLinkClick}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                Projects
+              </Link>
+              <Link 
+                href="#skills" 
+                className="py-3 border-b border-gray-200 dark:border-gray-700 hover:text-blue-500 transition-colors flex items-center gap-2"
+                onClick={handleLinkClick}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+                Skills
+              </Link>
+              <Link 
+                href="#resume" 
+                className="py-3 border-b border-gray-200 dark:border-gray-700 hover:text-blue-500 transition-colors flex items-center gap-2"
+                onClick={handleLinkClick}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Resume
+              </Link>
+              <Link 
+                href="#contact" 
+                className="py-3 hover:text-blue-500 transition-colors flex items-center gap-2"
+                onClick={handleLinkClick}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Contact
+              </Link>
+            </div>
           </div>
         </div>
       </nav>
@@ -291,7 +495,8 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="text-3xl font-bold mb-12 text-center">Projects</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Project 1 */}
+            {/* Project 1 - Only visible if within projectsToShow limit */}
+            {0 < projectsToShow && (
             <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
               <div className="relative h-48 w-full overflow-hidden">
                 <Image 
@@ -344,7 +549,7 @@ export default function Home() {
                     </svg>
                     Code
                   </a> */}
-                  <a href="https://drive.google.com/file/d/1xh5bIVlYUr4TZ1JlHiDhWEArZBThJVC9/view?usp=sharing" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                  <a href="https://drive.google.com/file/d/1xh5bIVlYUr4TZ1JlHiDhWEArZBThJVC9/view?usp=sharing" target="_blank" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -354,8 +559,10 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            )}
 
-            {/* Project 2 */}
+            {/* Project 2 - Only visible if within projectsToShow limit */}
+            {1 < projectsToShow && (
             <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
               <div className="relative h-48 w-full overflow-hidden">
                 <Image 
@@ -397,8 +604,10 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            )}
 
-            {/* Project 3 */}
+            {/* Project 3 - Only visible if within projectsToShow limit */}
+            {2 < projectsToShow && (
             <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
               <div className="relative h-48 w-full overflow-hidden">
                 <Image 
@@ -438,6 +647,197 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            )}
+
+            {/* Project 4 - Only visible if showing all projects */}
+            {3 < projectsToShow && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+              <div className="relative h-48 w-full overflow-hidden">
+                <Image 
+                  src="/images/projects/head.png"
+                  alt="Project 3 Preview"
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2">Head Football Game</h3>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                This is a fun and interactive 2D football game where two players compete against each other to score goals using their heads and feet. The game is built using Processing with Python mode and features realistic physics, player animations, and engaging sound effects.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Python</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Processing</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">OOP</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Physics</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Animation</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Sound Effects</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">2D Game</span>
+                </div>
+                <div className="flex space-x-4">
+                  <a href="https://github.com/assylbek-codes/head_football_game" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    Code
+                  </a>
+                  {/* <a href="#" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Demo
+                  </a> */}
+                </div>
+              </div>
+            </div>
+            )}
+
+            {/* Project 5 - Only visible if showing all projects */}
+            {4 < projectsToShow && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+              <div className="relative h-48 w-full overflow-hidden">
+                <Image 
+                  src="/images/projects/pca image.png"
+                  alt="Project 3 Preview"
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2">Face Recognition using PCA</h3>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                This project focuses on implementing Principal Component Analysis (PCA) for face recognition. The main objective is to analyze and visualize facial data, compute eigenfaces, and reconstruct faces using a reduced number of principal components. This project uses linear algebra and statistical analysis techniques to represent high-dimensional data in a lower-dimensional space for computational efficiency. It also provides visualizations to help understand how PCA works for facial recognition.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Python</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Matplotlib</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Pandas & NumPy</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Machine Learning</span>
+                </div>
+                <div className="flex space-x-4">
+                  <a href="https://github.com/assylbek-codes/pca-face-recognition" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    Code
+                  </a>
+                  {/* <a href="#" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Demo
+                  </a> */}
+                </div>
+              </div>
+            </div>
+            )}
+
+            {/* Project 6 - Only visible if showing all projects */}
+            {5 < projectsToShow && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+              <div className="relative h-48 w-full overflow-hidden">
+                <Image 
+                  src="/images/projects/snake.png"
+                  alt="Project 3 Preview"
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2">Snake Game in Python</h3>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                This is a simple Snake Game implemented in Python using the Processing framework. The game includes various fruits like apples and bananas that the snake can eat to grow longer. The game ends when the snake collides with itself or the screen boundaries.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Python</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Processing</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">OOP</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Game Development</span>
+                </div>
+                <div className="flex space-x-4">
+                  <a href="https://github.com/assylbek-codes/snake-game/" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    Code
+                  </a>
+                  {/* <a href="#" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Demo
+                  </a> */}
+                </div>
+              </div>
+            </div>
+            )}
+
+            {/* Project 7 - Only visible if showing all projects */}
+            {6 < projectsToShow && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+              <div className="relative h-48 w-full overflow-hidden">
+                <Image 
+                  src="/images/projects/spam.png"
+                  alt="Project 3 Preview"
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2">Perceptron Spam Classification</h3>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                This project implements a Perceptron-based machine learning algorithm to classify spam emails. It includes functions for vocabulary creation, training, and testing of the model using a custom dataset. data is from SpamAssassin Public Corpus
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Python</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Perceptron Algorithm</span>
+                  <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">Machine Learning</span>
+                </div>
+                <div className="flex space-x-4">
+                  <a href="https://github.com/assylbek-codes/email-spam-classification" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    Code
+                  </a>
+                  {/* <a href="#" className="text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Demo
+                  </a> */}
+                </div>
+              </div>
+            </div>
+            )}
+          </div>
+          
+          {/* View More/Less Button */}
+          <div className="flex justify-center mt-12">
+            <button
+              onClick={() => setShowAllProjects(!showAllProjects)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition-colors flex items-center gap-2"
+            >
+              {showAllProjects ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                  </svg>
+                  View Less
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                  View More
+                </>
+              )}
+            </button>
           </div>
         </div>
       </section>
@@ -569,7 +969,7 @@ export default function Home() {
                     Download PDF
           </a>
           <a
-                    href="https://drive.google.com/file/d/1FZ2wmJThFWH7f3HuigUvBBfjGXWwZn52/view?usp=sharing" 
+                    href="https://drive.google.com/file/d/1iqMbk798NcfGccmvqYefuTfID3HuBho9/view?usp=sharing" 
             target="_blank"
             rel="noopener noreferrer"
                     className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
@@ -704,12 +1104,12 @@ export default function Home() {
                   
                   <h4 className="text-lg font-semibold mb-2">Response Time</h4>
                   <p className="text-gray-700 dark:text-gray-300 mb-6">
-                    I typically respond to emails within 5 hours.
+                    I typically respond to emails within 1 hour.
                   </p>
                   
                   <h4 className="text-lg font-semibold mb-2">Preferred Contact Method</h4>
                   <p className="text-gray-700 dark:text-gray-300">
-                    Telegram/Email are the best way to reach me for professional inquiries. Feel free to connect on LinkedIn.
+                    Telegram/Email are the best way to reach out to me. Feel free to connect on LinkedIn.
                   </p>
                 </div>
               </div>
@@ -727,3 +1127,4 @@ export default function Home() {
     </div>
   );
 }
+

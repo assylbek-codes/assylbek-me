@@ -17,6 +17,28 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   // Set output directory for static export
   distDir: "out",
+  
+  // Reduce development recompilations
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      // Reduce the frequency of HMR checks in development
+      config.watchOptions = {
+        ...config.watchOptions,
+        aggregateTimeout: 300, // Delay before rebuilding
+        poll: false, // Use filesystem events instead of polling
+        ignored: ['**/node_modules', '**/.git', '**/out'],
+      };
+    }
+    return config;
+  },
+  
+  // Reduce static generation verbosity
+  onDemandEntries: {
+    // period (in ms) where the server will keep pages in the buffer
+    maxInactiveAge: 60 * 1000,
+    // number of pages that should be kept simultaneously without being disposed
+    pagesBufferLength: 5,
+  },
 };
 
 export default nextConfig;

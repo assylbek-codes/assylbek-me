@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Assylbek Saduakhassov | Software Engineer",
+  title: "Assylbek",
   description: "Personal portfolio of Assylbek Saduakhassov, a software engineer and NYU AD Computer Science graduate.",
 };
 
