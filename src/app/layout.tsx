@@ -15,6 +15,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Assylbek",
   description: "Personal portfolio of Assylbek Saduakhassov, a software engineer and NYU AD Computer Science graduate.",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico' }
+    ],
+    apple: [
+      { url: '/apple-icon.svg', type: 'image/svg+xml' }
+    ]
+  },
 };
 
 export default function RootLayout({
